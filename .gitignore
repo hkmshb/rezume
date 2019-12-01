@@ -3,3 +3,9 @@
 
 # build outupt
 dist/
+*.egg-info/
+__pycache__/
+
+# misc
+[.-]tmp
+[.-]tox
