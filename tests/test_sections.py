@@ -1,28 +1,9 @@
 import pytest
 import random
-from rezume.base import NamedSection, Section, ResumeBase
-from rezume.content import EducationSet, ExperienceSet, LanguageSet, SkillSet
-
-
-class SectionWithName(NamedSection):
-    name = "Section"
-
-
-class SectionWithoutName(NamedSection):
-    name = None
+from rezume.sections import Section, ResumeBase
 
 
 class TestSection:
-    def test_named_section_without_name_fails_instantiation(self):
-        with pytest.raises(ValueError):
-            SectionWithoutName()
-
-    def test_named_section_with_name_passes_instantiation(self):
-        try:
-            SectionWithName()
-        except Exception:
-            pytest.fail("Exception not expected")
-
     def test_instantiation_with_elements(self):
         section = Section()
         assert len(section) == 0
@@ -74,18 +55,6 @@ class TestSection:
         section, item = Section(), (1, 2, "boys")
         key = section._generate_key(item)
         assert key is item
-
-    @pytest.mark.parametrize(
-        "section_cls", [EducationSet, ExperienceSet, LanguageSet, SkillSet]
-    )
-    def test_core_sections_expected_to_be_named(self, section_cls):
-        # documents rezume sections expected to be named
-        try:
-            section = section_cls()
-            assert hasattr(section, "name")
-            assert section.name not in ("", None)
-        except Exception:
-            pytest.fail("Exception not expected")
 
 
 class TestResumeBase:

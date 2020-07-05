@@ -10,7 +10,7 @@ authors = ["Abdul-Hakeem Shaibu <s.abdulhakeeem@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-pydantic = "^1.5.1"
+pydantic = {version = "^1.5.1", extras = ["email"]}
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
