@@ -1,7 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel
 
-from .base import DatedEntry, NamedKeywords
+from .base import DatedEntry, Section, NamedSection, TimelinedSection
 
 
 class Education(DatedEntry):
@@ -11,7 +11,7 @@ class Education(DatedEntry):
     institution: str
     study_area: str
     study_type: str = "Bachelor"
-    gpa: Optional[float]
+    gpa: Optional[str]
     courses: Optional[List[str]]
 
 
@@ -30,7 +30,7 @@ class Language(BaseModel):
     """Represents details describing language spoken.
     """
 
-    name: str = "English"
+    language: str = "English"
     fluency: str
 
 
@@ -54,6 +54,14 @@ class Profile(BaseModel):
     url: str
 
 
+class NamedKeywords(BaseModel):
+    """Represents details describing a named list of keywords.
+    """
+
+    name: str
+    keywords: Optional[List[str]]
+
+
 class Skill(NamedKeywords):
     """Represents details describing skill.
     """
@@ -66,3 +74,60 @@ class Interest(NamedKeywords):
     """
 
     pass
+
+
+class EducationSet(NamedSection, TimelinedSection):
+    """Represents a set of details describing educational qualifications.
+    """
+
+    name = "education"
+
+    def _generate_key(self, item: Education):
+        return f"{item.institution}:{item.study_area}:{item.study_type}"
+
+    def _sorter(self, item: Education):
+        return item.start_date
+
+
+class ExperienceSet(NamedSection, TimelinedSection):
+    """Represents a set of details describing work related experiences.
+    """
+
+    name = "experience"
+
+    def _generate_key(self, item: Experience):
+        key = f"{item.company}:{item.position}"
+        if item.start_date:
+            key += f":{item.start_date.strftime('%Y%m')}"
+        return key
+
+
+class LanguageSet(NamedSection):
+    """Represents a set of spoken languages.
+    """
+
+    name = "language"
+
+    def _generate_key(self, item: Language):
+        return item.language
+
+
+class ProfileSet(Section):
+    """Represents a set of profiles.
+    """
+
+    def _generate_key(self, elem: Profile) -> str:
+        return elem.network
+
+    def _sorter(self, elem: Profile) -> str:
+        return elem.network
+
+
+class SkillSet(NamedSection):
+    """Represents a set of skills.
+    """
+
+    name = "skill"
+
+    def _generate_key(self, item: Skill):
+        return item.name
