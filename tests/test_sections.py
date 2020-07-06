@@ -1,6 +1,8 @@
 import pytest
 import random
-from rezume.sections import Section, ResumeBase
+from rezume.base import RezumeError
+from rezume.sections import Section, RezumeBase
+from rezume.models import Education, Experience
 
 
 class TestSection:
@@ -57,15 +59,52 @@ class TestSection:
         assert key is item
 
 
-class TestResumeBase:
-    class SectionA:
-        name = "A"
+class TestRezumeBase:
+    def test_instance_is_prepopulated_with_data_sections(self):
+        rezume = RezumeBase()
+        assert len(rezume) > 0
 
-    class SectionB:
-        name = "B"
+    def test_adding_item_to_unknown_section_fails(self):
+        rezume = RezumeBase()
+        with pytest.raises(RezumeError):
+            rezume.add_item("-work-", Experience.construct())
 
-    def test_is_subscriptable_for_items(self):
-        base = ResumeBase()
-        base.add(TestResumeBase.SectionA())
-        base.add(TestResumeBase.SectionB())
-        assert base["A"] is not None
+    def test_removing_item_from_unknown_section_fails(self):
+        rezume = RezumeBase()
+        with pytest.raises(RezumeError):
+            rezume.discard_item("-work-", Experience.construct())
+
+    def test_can_add_item_to_known_section(self):
+        try:
+            rezume = RezumeBase()
+            section_name = "education"
+            assert len(rezume[section_name]) == 0
+
+            item = Education(
+                institution="edX", study_area="humanity", start_date="2020-07-05"
+            )
+            rezume.add_item(section_name, item)
+            assert len(rezume[section_name]) == 1
+        except Exception:
+            pytest.fail("Exception not expected")
+
+    @pytest.mark.skip(msg="restore when resume uses generic section")
+    def test_adding_item_to_wrong_section_fails(self):
+        rezume = RezumeBase()
+        with pytest.raises(RezumeError):
+            item = Education(
+                institution="edX", study_area="humanity", start_date="2020-07-05"
+            )
+            rezume.add_item("work", item)
+
+    @pytest.mark.skip(msg="restore when resume uses generic section")
+    def test_removing_item_from_wrong_section_fails(self):
+        rezume = RezumeBase()
+
+        item = Education(
+            institution="edX", study_area="humanity", start_date="2020-07-05"
+        )
+        rezume.add_item("education", item)
+
+        with pytest.raises(RezumeError):
+            rezume.discard_item("work", item)

@@ -1,5 +1,6 @@
 from collections.abc import MutableSet
 from typing import Any, Iterable
+from .base import RezumeError
 from .models import (
     DatedEntry,
     Education,
@@ -120,10 +121,23 @@ class NamedKeywordsSet(NamedSection):
         return item.name
 
 
-class ResumeBase(Section):
+class RezumeBase(Section):
     """Represents the base abstraction for a resume which is a collection of
     named sections.
     """
+
+    DATA_SECTIONS = {
+        "education": EducationSet,
+        "interests": NamedKeywordsSet,
+        "languages": LanguageSet,
+        "skills": NamedKeywordsSet,
+        "volunteer": ExperienceSet,
+        "work": ExperienceSet,
+    }
+
+    def __init__(self):
+        sections = [cls(name) for name, cls in RezumeBase.DATA_SECTIONS.items()]
+        super().__init__(sections)
 
     @property
     def sections(self) -> Iterable[NamedSection]:
@@ -138,3 +152,29 @@ class ResumeBase(Section):
 
     def _generate_key(self, section: NamedSection):
         return section.name
+
+    def add_item(self, section_name: str, item: Any):
+        """Adds an item for the specified rezume section.
+        """
+        section = self[section_name]
+        # is None is used deliberately below as an empty section is
+        # regarded as a falsy which is not the expected outcome here
+        if section is None:
+            raise RezumeError(f"Section not found: {section_name}")
+        section.add(item)
+
+    def discard_item(self, section_name: str, item: Any):
+        """Discards an item for the specified rezume section.
+        """
+        section = self[section_name]
+        if section is None:
+            raise RezumeError(f"Section not found: {section_name}")
+        section.discard(item)
+
+    def clear_section(self, section_name: str):
+        """Clears the items for the specified rezume section.
+        """
+        section = self[section_name]
+        if not section:
+            raise RezumeError(f"Section not found: {section_name}")
+        section.clear()

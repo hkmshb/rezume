@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from typing import List, Optional
 from pydantic import BaseModel, EmailStr, HttpUrl
 
@@ -7,8 +7,8 @@ class DatedEntry(BaseModel):
     """Represents an entry having a start and end date.
     """
 
-    start_date: datetime
-    end_date: Optional[datetime]
+    start_date: date
+    end_date: Optional[date]
 
 
 class NamedKeywords(BaseModel):
@@ -91,7 +91,7 @@ class PersonalInfo(BaseModel):
     profiles: List[Profile]
 
 
-class Resume(BaseModel):
+class Rezume(BaseModel):
     """Represents resume data.
     """
 
