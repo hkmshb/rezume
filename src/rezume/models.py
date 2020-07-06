@@ -66,7 +66,7 @@ class Profile(BaseModel):
 
     network: str
     username: str
-    url: str
+    url: HttpUrl
 
 
 class Skill(NamedKeywords):

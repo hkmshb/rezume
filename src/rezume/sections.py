@@ -7,7 +7,9 @@ from .models import (
     Experience,
     Language,
     NamedKeywords,
+    PersonalInfo,
     Profile,
+    Rezume,
 )
 
 
@@ -136,7 +138,8 @@ class RezumeBase(Section):
     }
 
     def __init__(self):
-        sections = [cls(name) for name, cls in RezumeBase.DATA_SECTIONS.items()]
+        sections = [cls(name) for name, cls in self.DATA_SECTIONS.items()]
+        self.basics = PersonalInfo.construct(profiles=[])
         super().__init__(sections)
 
     @property
@@ -178,3 +181,44 @@ class RezumeBase(Section):
         if not section:
             raise RezumeError(f"Section not found: {section_name}")
         section.clear()
+
+    def clear(self):
+        super().clear()
+        sections = [cls(name) for name, cls in self.DATA_SECTIONS.items()]
+        for section in sections:
+            self.add(section)
+
+    def load_data(self, data: dict):
+        """Loads the provide rezume data.
+        """
+        self.clear()
+        rezume = Rezume(**data)
+
+        # assign basics
+        self.basics = rezume.basics
+
+        # assign sections
+        for section_name in self.DATA_SECTIONS:
+            if not hasattr(rezume, section_name):
+                continue
+
+            section = getattr(rezume, section_name)
+            if not section:
+                continue
+
+            for item in section:
+                self.add_item(section_name, item)
+
+    def dump_data(self) -> dict:
+        # collect basics
+        data = {"basics": self.basics.dict(exclude_none=True)}
+
+        # collect sections
+        for section_name in self.DATA_SECTIONS:
+            if not self[section_name]:
+                continue
+
+            items = [i.dict(exclude_none=True) for i in self[section_name]]
+            data[section_name] = items
+
+        return data

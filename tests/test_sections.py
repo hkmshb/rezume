@@ -1,5 +1,6 @@
 import pytest
 import random
+from pydantic import ValidationError
 from rezume.base import RezumeError
 from rezume.sections import Section, RezumeBase
 from rezume.models import Education, Experience
@@ -108,3 +109,78 @@ class TestRezumeBase:
 
         with pytest.raises(RezumeError):
             rezume.discard_item("work", item)
+
+    def test_loading_malformed_non_optional_rezume_data_fails(self):
+        data = {
+            "basics": {  # missing location
+                "name": "John Doe",
+                "label": "Programmer",
+                "email": "john@doe.com",
+                "phone": "0807-0000-1111",
+                "website": "http://johndoe.com",
+                "summary": "A summary of john doe...",
+                "profiles": [
+                    {
+                        "network": "twitter",
+                        "username": "john",
+                        "url": "http://twitter.com/john",
+                    }
+                ],
+            },
+            "education": [
+                {
+                    "institution": "University",
+                    "study_area": "Bachelor",
+                    "start_date": "2020-07-05",
+                }
+            ],
+        }
+
+        rezume = RezumeBase()
+        with pytest.raises(ValidationError):
+            rezume.load_data(data)
+
+    def test_can_load_wellformed_non_optional_rezume_data(self):
+        data = {
+            "basics": {
+                "name": "John Doe",
+                "label": "Programmer",
+                "email": "john@doe.com",
+                "phone": "0807-0000-1111",
+                "website": "http://johndoe.com",
+                "summary": "A summary of john doe...",
+                "location": {
+                    "address": "276 Alu Avenue",
+                    "postal_code": "KN 700214",
+                    "city": "Kano",
+                    "region": "Kano State",
+                    "country_code": "NG",
+                },
+                "profiles": [
+                    {
+                        "network": "twitter",
+                        "username": "john",
+                        "url": "http://twitter.com/john",
+                    }
+                ],
+            },
+            "education": [
+                {
+                    "institution": "University",
+                    "study_area": "Software Engineering",
+                    "start_date": "2020-07-05",
+                }
+            ],
+        }
+
+        try:
+            rezume = RezumeBase()
+            assert rezume.basics is not None
+            assert len(rezume.basics.profiles) == 0
+            assert len(rezume["education"]) == 0
+
+            rezume.load_data(data)
+            assert len(rezume.basics.profiles) == 1
+            assert len(rezume["education"]) == 1
+        except Exception:
+            pytest.fail("Exception not expected")
