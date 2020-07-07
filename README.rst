@@ -1,4 +1,4 @@
 Rezume
 ======
 
-A CLI tool to easily setup a new text-based Resume.
+A CLI tool to easily manage a text-based Resume.
