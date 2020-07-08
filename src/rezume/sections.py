@@ -1,15 +1,16 @@
 from collections.abc import MutableSet
-from typing import Any, Iterable
+from typing import Any, Iterable, Optional
+from pydantic import EmailStr, HttpUrl
+
 from .base import RezumeError
 from .models import (
     DatedEntry,
     Education,
     Experience,
     Language,
+    Location,
     NamedKeywords,
-    PersonalInfo,
     Profile,
-    Rezume,
 )
 
 
@@ -71,7 +72,7 @@ class TimelinedSection(NamedSection):
         return iter(items)
 
 
-class ProfileSet(NamedSection):
+class ProfileSet(Section):
     """Represents a set of profiles.
     """
 
@@ -128,19 +129,22 @@ class RezumeBase(Section):
     named sections.
     """
 
-    DATA_SECTIONS = {
-        "education": EducationSet,
-        "interests": NamedKeywordsSet,
-        "languages": LanguageSet,
-        "skills": NamedKeywordsSet,
-        "volunteer": ExperienceSet,
-        "work": ExperienceSet,
-    }
+    def __init__(self, items: Iterable[Section] = None):
+        super().__init__(items)
+        self.name: str = ""
+        self.label: str = ""
+        self.email: EmailStr = ""
+        self.location: Location = Location.construct()
+        self.phone: Optional[str] = ""
+        self.picture: Optional[str] = ""
+        self.summary: Optional[str] = ""
+        self.website: Optional[HttpUrl] = ""
 
-    def __init__(self):
-        sections = [cls(name) for name, cls in self.DATA_SECTIONS.items()]
-        self.basics = PersonalInfo.construct(profiles=[])
-        super().__init__(sections)
+    @property
+    def profiles(self) -> ProfileSet:
+        if not hasattr(self, "_profiles"):
+            self._profiles = ProfileSet()
+        return self._profiles
 
     @property
     def sections(self) -> Iterable[NamedSection]:
@@ -181,44 +185,3 @@ class RezumeBase(Section):
         if not section:
             raise RezumeError(f"Section not found: {section_name}")
         section.clear()
-
-    def clear(self):
-        super().clear()
-        sections = [cls(name) for name, cls in self.DATA_SECTIONS.items()]
-        for section in sections:
-            self.add(section)
-
-    def load_data(self, data: dict):
-        """Loads the provide rezume data.
-        """
-        self.clear()
-        rezume = Rezume(**data)
-
-        # assign basics
-        self.basics = rezume.basics
-
-        # assign sections
-        for section_name in self.DATA_SECTIONS:
-            if not hasattr(rezume, section_name):
-                continue
-
-            section = getattr(rezume, section_name)
-            if not section:
-                continue
-
-            for item in section:
-                self.add_item(section_name, item)
-
-    def dump_data(self) -> dict:
-        # collect basics
-        data = {"basics": self.basics.dict(exclude_none=True)}
-
-        # collect sections
-        for section_name in self.DATA_SECTIONS:
-            if not self[section_name]:
-                continue
-
-            items = [i.dict(exclude_none=True) for i in self[section_name]]
-            data[section_name] = items
-
-        return data

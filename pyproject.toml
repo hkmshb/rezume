@@ -16,3 +16,4 @@ pydantic = {version = "^1.5.1", extras = ["email"]}
 black = "^19.10b0"
 mypy = "^0.782"
 pytest = "^5.4.3"
+pytest-cov = "^2.10.0"

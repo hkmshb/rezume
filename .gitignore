@@ -6,6 +6,10 @@ dist/
 *.egg-info/
 __pycache__/
 
+# coverage
+.coverage
+*.code-workspace
+
 # misc
 [.-]tmp
 [.-]tox

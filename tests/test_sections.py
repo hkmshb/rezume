@@ -1,9 +1,11 @@
 import pytest
 import random
 from pydantic import ValidationError
-from rezume.base import RezumeError
-from rezume.sections import Section, RezumeBase
+
 from rezume.models import Education, Experience
+from rezume.sections import Section
+from rezume.base import RezumeError
+from rezume import Rezume
 
 
 class TestSection:
@@ -60,24 +62,24 @@ class TestSection:
         assert key is item
 
 
-class TestRezumeBase:
+class TestRezume:
     def test_instance_is_prepopulated_with_data_sections(self):
-        rezume = RezumeBase()
+        rezume = Rezume()
         assert len(rezume) > 0
 
     def test_adding_item_to_unknown_section_fails(self):
-        rezume = RezumeBase()
+        rezume = Rezume()
         with pytest.raises(RezumeError):
             rezume.add_item("-work-", Experience.construct())
 
     def test_removing_item_from_unknown_section_fails(self):
-        rezume = RezumeBase()
+        rezume = Rezume()
         with pytest.raises(RezumeError):
             rezume.discard_item("-work-", Experience.construct())
 
     def test_can_add_item_to_known_section(self):
         try:
-            rezume = RezumeBase()
+            rezume = Rezume()
             section_name = "education"
             assert len(rezume[section_name]) == 0
 
@@ -91,7 +93,7 @@ class TestRezumeBase:
 
     @pytest.mark.skip(msg="restore when resume uses generic section")
     def test_adding_item_to_wrong_section_fails(self):
-        rezume = RezumeBase()
+        rezume = Rezume()
         with pytest.raises(RezumeError):
             item = Education(
                 institution="edX", study_area="humanity", start_date="2020-07-05"
@@ -100,7 +102,7 @@ class TestRezumeBase:
 
     @pytest.mark.skip(msg="restore when resume uses generic section")
     def test_removing_item_from_wrong_section_fails(self):
-        rezume = RezumeBase()
+        rezume = Rezume()
 
         item = Education(
             institution="edX", study_area="humanity", start_date="2020-07-05"
@@ -136,7 +138,7 @@ class TestRezumeBase:
             ],
         }
 
-        rezume = RezumeBase()
+        rezume = Rezume()
         with pytest.raises(ValidationError):
             rezume.load_data(data)
 
@@ -174,13 +176,12 @@ class TestRezumeBase:
         }
 
         try:
-            rezume = RezumeBase()
-            assert rezume.basics is not None
-            assert len(rezume.basics.profiles) == 0
+            rezume = Rezume()
+            assert len(rezume.profiles) == 0
             assert len(rezume["education"]) == 0
 
             rezume.load_data(data)
-            assert len(rezume.basics.profiles) == 1
+            assert len(rezume.profiles) == 1
             assert len(rezume["education"]) == 1
         except Exception:
             pytest.fail("Exception not expected")
