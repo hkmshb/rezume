@@ -1,0 +1,51 @@
+basics:
+  label: Programmer
+  name: John Doe
+  email: john@doe.com
+  phone: 0807-0000-1111
+  website: http://johndoe.com
+  summary: A summary of john doe ...
+  location:
+    address: 276 Alu Avenue
+    postal_code: KN 700214
+    city: Kano
+    region: Kano start_date
+    country_code: NG
+  profiles:
+    - network: twitter
+      username: john
+      url: http://twitter.com/john
+work:
+  - company: Company
+    position: President
+    website: http://company.com
+    start_date: 2000-07-05
+    end_date: 2020-07-05
+    summary: Description ...
+    highlights:
+      - Started the company
+volunteer:
+  - company: Company
+    position: Volunteer
+    website: http://company.com
+    start_date: 2012-07-05
+    end_date: 2015-07-05
+    summary: Description ...
+    highlights:
+      - Awarded 'Volunteer of the Month'
+education:
+  - institution: University
+    study_area: Bachelor
+    start_date: 2020-07-05
+skills:
+  - name: Web Developer
+    level: Master
+    keywords: [ HTML, CSS, Javascript ]
+languages:
+  - language: English
+    fluency: Native speaker
+interests:
+  - name: Wildlife
+    keywords:
+      - Ferrets
+      - Unicorns

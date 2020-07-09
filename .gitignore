@@ -11,5 +11,6 @@ __pycache__/
 *.code-workspace
 
 # misc
+*.log
 [.-]tmp
 [.-]tox

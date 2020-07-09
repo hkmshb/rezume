@@ -1,0 +1,16 @@
+# missing basic.location
+basics:
+  name: John Doe
+  label: Programmer
+  email: john@doe.com
+  phone: 0807-0000-1111
+  website: http://johndoe.com
+  summary: A summary of john doe ...
+  profiles:
+    - network: twitter
+      username: john
+      url: http://twitter.com/john
+education:
+  - institution: University
+    study_area: Bachelor
+    start_date: 2020-07-05

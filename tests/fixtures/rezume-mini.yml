@@ -1,0 +1,22 @@
+basics:
+  email: john@doe.com
+  label: Programmer
+  location:
+    address: 276 Alu Avenue
+    city: Kano
+    country_code: NG
+    postal_code: KN 700214
+    region: Kano start_date
+  name: John Doe
+  phone: 0807-0000-1111
+  profiles:
+  - network: twitter
+    url: http://twitter.com/john
+    username: john
+  summary: A summary of john doe ...
+  website: http://johndoe.com
+education:
+- institution: University
+  start_date: '2020-07-05'
+  study_area: Bachelor
+  study_type: Bachelor

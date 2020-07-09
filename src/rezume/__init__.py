@@ -1,5 +1,11 @@
 import pkg_resources
 from pathlib import Path
+from typing import Any, Union
+from datetime import date, datetime
+from yaml import dump, load, Dumper, Loader
+from pydantic import BaseModel, HttpUrl, ValidationError
+
+from .base import RezumeError
 from .models import Rezume as RezumeModel
 from .sections import (
     EducationSet,
@@ -32,7 +38,7 @@ class Rezume(RezumeBase):
         "website",
     ]
 
-    SECTIONS = {
+    NAMED_SECTIONS = {
         "education": EducationSet,
         "interests": NamedKeywordsSet,
         "languages": LanguageSet,
@@ -42,30 +48,34 @@ class Rezume(RezumeBase):
     }
 
     def __init__(self):
-        sections = [cls(name) for name, cls in self.SECTIONS.items()]
+        sections = [cls(name) for name, cls in self.NAMED_SECTIONS.items()]
         super().__init__(sections)
 
     def clear(self):
         super().clear()
         self.profiles.clear()
 
-        sections = [cls(name) for name, cls in self.SECTIONS.items()]
+        sections = [cls(name) for name, cls in self.NAMED_SECTIONS.items()]
         for section in sections:
             self.add(section)
 
     def dump_data(self) -> dict:
-        # collect basics
-        basics = {getattr(self, f) for f in self.FIELDS}
-        basics["profiles"] = [p.dict() for p in self.profiles]  # type: ignore
+        # dump basics
+        basics = {}
+        for field in self.FIELDS:
+            value = getattr(self, field)
+            if not value:
+                continue
+            basics[field] = self._sanitize(value)
+
+        basics["profiles"] = list(map(self._sanitize, self.profiles))
         data = {"basics": basics}
 
-        # collect sections
-        for section_name in self.SECTIONS:
-            if not self[section_name]:
+        # dump sections
+        for section in self.sections:
+            if not section:
                 continue
-
-            items = [i.dict(exclude_none=True) for i in self[section_name]]
-            data[section_name] = items  # type: ignore
+            data[section.name] = list(map(self._sanitize, section))  # type: ignore
 
         return data
 
@@ -86,7 +96,7 @@ class Rezume(RezumeBase):
             self.profiles.add(profile)
 
         # assign sections
-        for section_name in self.SECTIONS:
+        for section_name in self.NAMED_SECTIONS:
             if not hasattr(rezume, section_name):
                 continue
 
@@ -97,8 +107,44 @@ class Rezume(RezumeBase):
             for item in section:
                 self.add_item(section_name, item)
 
-    def load(self, filepath: Path) -> None:
-        pass
+    def load(self, filepath: Union[str, Path]) -> None:
+        if not isinstance(filepath, Path):
+            filepath = Path(filepath)
 
-    def save(self, filepath: Path = None) -> None:
-        pass
+        if not filepath.exists() or filepath.is_dir():
+            raise RezumeError(f"File not found: {filepath}")
+
+        try:
+            with filepath.open() as fp:
+                content = load(fp, Loader=Loader)
+                self.load_data(content)
+        except (TypeError, ValidationError):
+            raise RezumeError(f"Invalid file format: {filepath}")
+
+    def save(self, filepath: Path, overwrite=False) -> None:
+        if not isinstance(filepath, Path):
+            filepath = Path(filepath)
+
+        if filepath.exists() and not overwrite:
+            raise RezumeError("File already exist, set overwrite if intended")
+
+        try:
+            with filepath.open("w") as fp:
+                content = dump(self.dump_data(), Dumper=Dumper)
+                fp.write(content)
+        except Exception as ex:
+            raise RezumeError(f"Save operation failed: {ex}")
+
+    def _sanitize(self, value: Any) -> Any:
+        if isinstance(value, BaseModel):
+            return self._sanitize(value.dict(exclude_none=True))
+        elif isinstance(value, HttpUrl):
+            return str(value)
+        elif isinstance(value, (date, datetime)):
+            return value.isoformat()
+        elif isinstance(value, (list, tuple)):
+            return list(map(self._sanitize, value))
+        elif isinstance(value, dict):
+            return {key: self._sanitize(value) for key, value in value.items() if value}
+        else:
+            return str(value)
