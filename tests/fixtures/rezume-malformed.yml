@@ -12,5 +12,5 @@ basics:
       url: http://twitter.com/john
 education:
   - institution: University
-    study_area: Bachelor
-    start_date: 2020-07-05
+    studyArea: Bachelor
+    startDate: 2020-07-05

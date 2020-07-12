@@ -3,7 +3,15 @@ from typing import List, Optional
 from pydantic import BaseModel, EmailStr, HttpUrl
 
 
-class DatedEntry(BaseModel):
+class Model(BaseModel):
+    class Config:
+        @classmethod
+        def alias_generator(cls, value: str) -> str:
+            [word, *words] = value.split("_")
+            return "".join([word] + [word.capitalize() for word in words])
+
+
+class DatedEntry(Model):
     """Represents an entry having a start and end date.
     """
 
@@ -11,7 +19,7 @@ class DatedEntry(BaseModel):
     end_date: Optional[date]
 
 
-class NamedKeywords(BaseModel):
+class NamedKeywords(Model):
     """Represents details describing a named list of keywords.
     """
 
@@ -41,7 +49,7 @@ class Experience(DatedEntry):
     highlights: Optional[List[str]]
 
 
-class Language(BaseModel):
+class Language(Model):
     """Represents details describing language spoken.
     """
 
@@ -49,7 +57,7 @@ class Language(BaseModel):
     fluency: str
 
 
-class Location(BaseModel):
+class Location(Model):
     """Represents a physical contact address.
     """
 
@@ -60,7 +68,7 @@ class Location(BaseModel):
     country_code: Optional[str] = "NG"
 
 
-class Profile(BaseModel):
+class Profile(Model):
     """Represents a profile on a social or professional network.
     """
 
@@ -76,7 +84,7 @@ class Skill(NamedKeywords):
     level: str
 
 
-class PersonalInfo(BaseModel):
+class PersonalInfo(Model):
     """Represents personal details for resume owner.
     """
 
@@ -91,7 +99,7 @@ class PersonalInfo(BaseModel):
     profiles: List[Profile]
 
 
-class Rezume(BaseModel):
+class Rezume(Model):
     """Represents resume data.
     """
 

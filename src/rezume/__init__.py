@@ -137,7 +137,7 @@ class Rezume(RezumeBase):
 
     def _sanitize(self, value: Any) -> Any:
         if isinstance(value, BaseModel):
-            return self._sanitize(value.dict(exclude_none=True))
+            return self._sanitize(value.dict(by_alias=True, exclude_none=True))
         elif isinstance(value, HttpUrl):
             return str(value)
         elif isinstance(value, (date, datetime)):

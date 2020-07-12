@@ -85,7 +85,7 @@ class TestRezume:
             assert len(rezume[section_name]) == 0
 
             item = Education(
-                institution="edX", study_area="humanity", start_date="2020-07-05"
+                institution="edX", studyArea="humanity", startDate="2020-07-05"
             )
             rezume.add_item(section_name, item)
             assert len(rezume[section_name]) == 1
@@ -133,8 +133,8 @@ class TestRezume:
             "education": [
                 {
                     "institution": "University",
-                    "study_area": "Bachelor",
-                    "start_date": "2020-07-05",
+                    "studyArea": "Bachelor",
+                    "startDate": "2020-07-05",
                 }
             ],
         }
@@ -170,8 +170,8 @@ class TestRezume:
             "education": [
                 {
                     "institution": "University",
-                    "study_area": "Software Engineering",
-                    "start_date": "2020-07-05",
+                    "studyArea": "Software Engineering",
+                    "startDate": "2020-07-05",
                 }
             ],
         }
