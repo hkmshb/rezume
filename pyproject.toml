@@ -12,9 +12,13 @@ authors = ["Abdul-Hakeem Shaibu <s.abdulhakeeem@gmail.com>"]
 python = "^3.8"
 pydantic = {version = "^1.5.1", extras = ["email"]}
 pyyaml = "^5.3.1"
+typer = {version = "^0.3.0", extras = ["all"]}
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
 mypy = "^0.782"
 pytest = "^5.4.3"
 pytest-cov = "^2.10.0"
+
+[tool.poetry.scripts]
+rezume = "rezume.cli:app"

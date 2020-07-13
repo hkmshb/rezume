@@ -2,7 +2,7 @@ import pkg_resources
 from pathlib import Path
 from typing import Any, Union
 from datetime import date, datetime
-from yaml import dump, load, Dumper, Loader
+from yaml import dump, load, Dumper, Loader, parser
 from pydantic import BaseModel, HttpUrl, ValidationError
 
 from .base import RezumeError
@@ -118,8 +118,10 @@ class Rezume(RezumeBase):
             with filepath.open() as fp:
                 content = load(fp, Loader=Loader)
                 self.load_data(content)
-        except (TypeError, ValidationError):
+        except (TypeError, parser.ParserError):
             raise RezumeError(f"Invalid file format: {filepath}")
+        except ValidationError as ex:
+            raise RezumeError(f"error: {ex}")
 
     def save(self, filepath: Path, overwrite=False) -> None:
         if not isinstance(filepath, Path):
