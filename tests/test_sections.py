@@ -247,3 +247,11 @@ class TestRezume:
             rezume.save(fpath, True)
         except Exception as ex:
             pytest.fail(f"Exception not expected: {ex}")
+
+    def test_personal_details_are_validated_on_dump(self):
+        rezume = Rezume()
+        rezume.name = "John"
+        rezume.email = "john"
+
+        with pytest.raises(ValidationError):
+            rezume.dump_data()

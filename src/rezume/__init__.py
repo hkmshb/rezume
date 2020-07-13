@@ -6,7 +6,7 @@ from yaml import dump, load, Dumper, Loader, parser
 from pydantic import BaseModel, HttpUrl, ValidationError
 
 from .base import RezumeError
-from .models import Rezume as RezumeModel
+from .models import PersonalInfo, Rezume as RezumeModel
 from .sections import (
     EducationSet,
     ExperienceSet,
@@ -69,7 +69,7 @@ class Rezume(RezumeBase):
             basics[field] = self._sanitize(value)
 
         basics["profiles"] = list(map(self._sanitize, self.profiles))
-        data = {"basics": basics}
+        data = {"basics": self._sanitize(PersonalInfo(**basics))}
 
         # dump sections
         for section in self.sections:

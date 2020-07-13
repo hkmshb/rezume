@@ -74,7 +74,7 @@ class Profile(Model):
 
     network: str
     username: str
-    url: HttpUrl
+    url: Optional[HttpUrl]
 
 
 class Skill(NamedKeywords):
