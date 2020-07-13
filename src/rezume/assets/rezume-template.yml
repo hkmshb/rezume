@@ -2,6 +2,8 @@ basics:
   label: Programmer
   name: John Doe
   email: john@doe.com
+  phone: null
+  picture: null
   website: http://johndoe.com
   summary: A summary of john doe ...
   location:

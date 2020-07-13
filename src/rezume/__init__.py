@@ -59,23 +59,26 @@ class Rezume(RezumeBase):
         for section in sections:
             self.add(section)
 
-    def dump_data(self) -> dict:
+    def dump_data(self, exclude_none=True) -> dict:
+        def sanitize(value):
+            return self._sanitize(value, exclude_none)
+
         # dump basics
         basics = {}
         for field in self.FIELDS:
             value = getattr(self, field)
-            if not value:
+            if not value and exclude_none:
                 continue
-            basics[field] = self._sanitize(value)
+            basics[field] = sanitize(value)
 
-        basics["profiles"] = list(map(self._sanitize, self.profiles))
-        data = {"basics": self._sanitize(PersonalInfo(**basics))}
+        basics["profiles"] = list(map(sanitize, self.profiles))
+        data = {"basics": sanitize(PersonalInfo(**basics))}
 
         # dump sections
         for section in self.sections:
             if not section:
                 continue
-            data[section.name] = list(map(self._sanitize, section))  # type: ignore
+            data[section.name] = list(map(sanitize, section))  # type: ignore
 
         return data
 
@@ -123,7 +126,7 @@ class Rezume(RezumeBase):
         except ValidationError as ex:
             raise RezumeError(f"error: {ex}")
 
-    def save(self, filepath: Path, overwrite=False) -> None:
+    def save(self, filepath: Path, overwrite=False, exclude_none=True) -> None:
         if not isinstance(filepath, Path):
             filepath = Path(filepath)
 
@@ -132,21 +135,24 @@ class Rezume(RezumeBase):
 
         try:
             with filepath.open("w") as fp:
-                content = dump(self.dump_data(), Dumper=Dumper)
+                content = dump(self.dump_data(exclude_none), Dumper=Dumper)
                 fp.write(content)
         except Exception as ex:
             raise RezumeError(f"Save operation failed: {ex}")
 
-    def _sanitize(self, value: Any) -> Any:
+    def _sanitize(self, value: Any, exclude_none) -> Any:
+        def sanitize(val):
+            return self._sanitize(val, exclude_none)
+
         if isinstance(value, BaseModel):
-            return self._sanitize(value.dict(by_alias=True, exclude_none=True))
+            return sanitize(value.dict(by_alias=True, exclude_none=exclude_none))
         elif isinstance(value, HttpUrl):
             return str(value)
         elif isinstance(value, (date, datetime)):
             return value.isoformat()
         elif isinstance(value, (list, tuple)):
-            return list(map(self._sanitize, value))
+            return list(map(sanitize, value))
         elif isinstance(value, dict):
-            return {key: self._sanitize(value) for key, value in value.items() if value}
+            return {key: sanitize(value) for key, value in value.items() if value}
         else:
             return str(value)

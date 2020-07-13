@@ -41,7 +41,7 @@ class InitCommand:
             for field, value in entries.items():
                 setattr(rezume, field, value)
 
-            rezume.save(self.filename, True)
+            rezume.save(self.filename, overwrite=True, exclude_none=True)
             typer.secho(
                 f"\nYour {self.filename.name} file has been created!\n",
                 fg=typer.colors.GREEN,
