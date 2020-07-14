@@ -4,12 +4,17 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "rezume"
-version = "0.1.0"
+version = "0.4.0"
 description = "CLI tool to easily set up a text-based Resume"
 authors = ["Abdul-Hakeem Shaibu <s.abdulhakeeem@gmail.com>"]
+license = "BSD-2-Clause"
+readme = "README.rst"
+repository = "https://github.com/hkmshb/rezume.git"
+keywords = [ "resume", "rezume" ]
+
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.6"
 pydantic = {version = "^1.5.1", extras = ["email"]}
 pyyaml = "^5.3.1"
 typer = {version = "^0.3.0", extras = ["all"]}
