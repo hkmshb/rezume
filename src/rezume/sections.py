@@ -4,13 +4,16 @@ from pydantic import EmailStr, HttpUrl
 
 from .base import RezumeError
 from .models import (
+    Award,
     DatedEntry,
     Education,
     Experience,
     Language,
     Location,
+    Publication,
     NamedKeywords,
     Profile,
+    Reference,
 )
 
 
@@ -72,12 +75,31 @@ class TimelinedSection(NamedSection):
         return iter(items)
 
 
+class NamedKeywordsSet(NamedSection):
+    """Represents a set of named keyworks.
+    """
+
+    def _generate_key(self, item: NamedKeywords):
+        return item.name
+
+
+class AwardSet(NamedSection):
+    """Represents a set of wards.
+    """
+
+    def _generate_key(self, item: Award) -> str:
+        return f"{item.title}:{item.awarder}"
+
+    def _sorter(self, item: Award):
+        return item.date
+
+
 class ProfileSet(Section):
     """Represents a set of profiles.
     """
 
-    def _generate_key(self, elem: Profile) -> str:
-        return elem.network
+    def _generate_key(self, item: Profile) -> str:
+        return item.network
 
     def _sorter(self, elem: Profile) -> str:
         return elem.network
@@ -113,11 +135,25 @@ class LanguageSet(NamedSection):
         return item.language
 
 
-class NamedKeywordsSet(NamedSection):
-    """Represents a set of named keyworks.
+class PublicationSet(NamedSection):
+    """Represents a set of publications.
     """
 
-    def _generate_key(self, item: NamedKeywords):
+    def _generate_key(self, item: Publication) -> str:
+        return f"{item.name}:{item.publisher}"
+
+    def _sorter(self, item: Publication):
+        return item.release_date
+
+
+class ReferenceSet(NamedSection):
+    """Represents a set of references.
+    """
+
+    def _generate_key(self, item: Reference) -> str:
+        return f"{item.name}"
+
+    def _sorter(self, item: Reference):
         return item.name
 
 

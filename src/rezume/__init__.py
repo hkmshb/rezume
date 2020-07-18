@@ -1,5 +1,5 @@
-import pkg_resources
 from pathlib import Path
+from importlib import metadata
 from typing import Any, Union
 from datetime import date, datetime
 from yaml import dump, load, Dumper, Loader, parser
@@ -8,10 +8,13 @@ from pydantic import BaseModel, HttpUrl, ValidationError
 from .base import RezumeError
 from .models import PersonalInfo, Rezume as RezumeModel
 from .sections import (
+    AwardSet,
     EducationSet,
     ExperienceSet,
     LanguageSet,
+    PublicationSet,
     NamedKeywordsSet,
+    ReferenceSet,
     RezumeBase,
 )
 
@@ -19,8 +22,7 @@ from .sections import (
 def get_version():
     """Retrieves and returns the package version details.
     """
-    package = pkg_resources.require("rezume")
-    return package[0].version
+    return metadata.version("rezume")
 
 
 class Rezume(RezumeBase):
@@ -39,12 +41,15 @@ class Rezume(RezumeBase):
     ]
 
     NAMED_SECTIONS = {
-        "education": EducationSet,
-        "interests": NamedKeywordsSet,
-        "languages": LanguageSet,
-        "skills": NamedKeywordsSet,
-        "volunteer": ExperienceSet,
         "work": ExperienceSet,
+        "volunteer": ExperienceSet,
+        "education": EducationSet,
+        "awards": AwardSet,
+        "publications": PublicationSet,
+        "skills": NamedKeywordsSet,
+        "languages": LanguageSet,
+        "interests": NamedKeywordsSet,
+        "references": ReferenceSet,
     }
 
     def __init__(self):

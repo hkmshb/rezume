@@ -66,6 +66,14 @@ class PersonalInfo(Model):
     profiles: List[Profile]
 
 
+class Reference(Model):
+    """Represents details describing reference received.
+    """
+
+    name: str
+    reference: str
+
+
 # =============================================================================
 # Experience & Education
 
@@ -125,6 +133,31 @@ class Skill(NamedKeywords):
 
 
 # =============================================================================
+# Achievements
+
+
+class Award(Model):
+    """Represents details describing a received award.
+    """
+
+    title: str
+    awarder: str
+    date: date
+    summary: Optional[str]
+
+
+class Publication(Model):
+    """Represents details describing a publication.
+    """
+
+    name: str
+    publisher: str
+    release_date: date
+    summary: Optional[str]
+    website: Optional[HttpUrl]
+
+
+# =============================================================================
 # Rezume
 
 
@@ -133,9 +166,12 @@ class Rezume(Model):
     """
 
     basics: PersonalInfo
-    education: List[Education]
-    interests: Optional[List[NamedKeywords]]
-    languages: Optional[List[Language]]
-    skills: Optional[List[Skill]]
-    volunteer: Optional[List[Volunteer]]
     work: Optional[List[Work]]
+    volunteer: Optional[List[Volunteer]]
+    education: List[Education]
+    awards: Optional[List[Award]]
+    publications: Optional[List[Publication]]
+    skills: Optional[List[Skill]]
+    languages: Optional[List[Language]]
+    interests: Optional[List[NamedKeywords]]
+    references: Optional[List[Reference]]
