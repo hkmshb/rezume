@@ -85,9 +85,14 @@ class Rezume(RezumeBase):
                 continue
             data[section.name] = list(map(sanitize, section))  # type: ignore
 
-        return data
+        # validate data to be returned to ensure it's well formed
+        try:
+            RezumeModel(**data)
+            return data
+        except ValidationError as ex:
+            raise RezumeError(f"error: {ex}")
 
-    def load_data(self, data: dict):
+    def load_data(self, data: dict) -> "Rezume":
         """Loads the provide rezume data.
         """
         self.clear()
@@ -115,7 +120,10 @@ class Rezume(RezumeBase):
             for item in section:
                 self.add_item(section_name, item)
 
-    def load(self, filepath: Union[str, Path]) -> None:
+        # allows fluent method chaining on `load_data`
+        return self
+
+    def load(self, filepath: Union[str, Path]) -> "Rezume":
         if not isinstance(filepath, Path):
             filepath = Path(filepath)
 
@@ -130,6 +138,9 @@ class Rezume(RezumeBase):
             raise RezumeError(f"Invalid file format: {filepath}")
         except ValidationError as ex:
             raise RezumeError(f"error: {ex}")
+        else:
+            # allows fluent method chaining on `load`
+            return self
 
     def save(self, filepath: Path, overwrite=False, exclude_none=True) -> None:
         if not isinstance(filepath, Path):
@@ -161,3 +172,19 @@ class Rezume(RezumeBase):
             return {key: sanitize(value) for key, value in value.items() if value}
         else:
             return str(value)
+
+    @classmethod
+    def is_valid(cls, source: Union[dict, str, Path]) -> bool:
+        try:
+            cls.validate(source)
+            return True
+        except RezumeError:
+            return False
+
+    @classmethod
+    def validate(cls, source: Union[dict, str, Path]):
+        if isinstance(source, str):
+            source = Path(source)
+
+        func_name = "load_data" if isinstance(source, dict) else "load"
+        getattr(Rezume(), func_name)(source)
