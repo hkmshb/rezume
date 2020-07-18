@@ -15,7 +15,7 @@ basics:
   summary: A summary of john doe ...
   website: http://johndoe.com
 education:
-- institution: University
+- area: Software Engineering
+  institution: University
   startDate: '2020-07-05'
-  studyArea: Software Engineering
   studyType: Bachelor

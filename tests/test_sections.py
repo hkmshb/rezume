@@ -84,9 +84,7 @@ class TestRezume:
             section_name = "education"
             assert len(rezume[section_name]) == 0
 
-            item = Education(
-                institution="edX", studyArea="humanity", startDate="2020-07-05"
-            )
+            item = Education(institution="edX", area="humanity", startDate="2020-07-05")
             rezume.add_item(section_name, item)
             assert len(rezume[section_name]) == 1
         except Exception:
@@ -97,7 +95,7 @@ class TestRezume:
         rezume = Rezume()
         with pytest.raises(RezumeError):
             item = Education(
-                institution="edX", study_area="humanity", start_date="2020-07-05"
+                institution="edX", area="humanity", start_date="2020-07-05"
             )
             rezume.add_item("work", item)
 
@@ -105,9 +103,7 @@ class TestRezume:
     def test_removing_item_from_wrong_section_fails(self):
         rezume = Rezume()
 
-        item = Education(
-            institution="edX", study_area="humanity", start_date="2020-07-05"
-        )
+        item = Education(institution="edX", area="humanity", start_date="2020-07-05")
         rezume.add_item("education", item)
 
         with pytest.raises(RezumeError):
@@ -133,7 +129,7 @@ class TestRezume:
             "education": [
                 {
                     "institution": "University",
-                    "studyArea": "Bachelor",
+                    "area": "Bachelor",
                     "startDate": "2020-07-05",
                 }
             ],
@@ -170,7 +166,7 @@ class TestRezume:
             "education": [
                 {
                     "institution": "University",
-                    "studyArea": "Software Engineering",
+                    "area": "Software Engineering",
                     "startDate": "2020-07-05",
                 }
             ],

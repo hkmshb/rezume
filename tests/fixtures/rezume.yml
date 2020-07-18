@@ -25,7 +25,7 @@ work:
     highlights:
       - Started the company
 volunteer:
-  - company: Company
+  - organization: Company
     position: Volunteer
     website: http://company.com
     startDate: 2012-07-05
@@ -35,7 +35,7 @@ volunteer:
       - Awarded 'Volunteer of the Month'
 education:
   - institution: University
-    studyArea: Software Engineering
+    area: Software Engineering
     startDate: 2020-07-05
 skills:
   - name: Web Developer

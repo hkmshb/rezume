@@ -27,34 +27,8 @@ class NamedKeywords(Model):
     keywords: Optional[List[str]]
 
 
-class Education(DatedEntry):
-    """Represents details describing an educational qualification.
-    """
-
-    institution: str
-    study_area: str
-    study_type: str = "Bachelor"
-    gpa: Optional[str]
-    courses: Optional[List[str]]
-
-
-class Experience(DatedEntry):
-    """Represents details describing a work-related experience.
-    """
-
-    company: str
-    position: str
-    summary: Optional[str]
-    website: Optional[HttpUrl]
-    highlights: Optional[List[str]]
-
-
-class Language(Model):
-    """Represents details describing language spoken.
-    """
-
-    language: str = "English"
-    fluency: str
+# =============================================================================
+# Personal Info
 
 
 class Location(Model):
@@ -77,13 +51,6 @@ class Profile(Model):
     url: Optional[HttpUrl]
 
 
-class Skill(NamedKeywords):
-    """Represents details describing skill.
-    """
-
-    level: str
-
-
 class PersonalInfo(Model):
     """Represents personal details for resume owner.
     """
@@ -99,6 +66,68 @@ class PersonalInfo(Model):
     profiles: List[Profile]
 
 
+# =============================================================================
+# Experience & Education
+
+
+class Education(DatedEntry):
+    """Represents details describing an educational qualification.
+    """
+
+    institution: str
+    area: str
+    study_type: str = "Bachelor"
+    gpa: Optional[str]
+    courses: Optional[List[str]]
+
+
+class Experience(DatedEntry):
+    """Represents base model for experience related objects.
+    """
+
+    position: str
+    summary: Optional[str]
+    website: Optional[HttpUrl]
+    highlights: Optional[List[str]]
+
+
+class Work(Experience):
+    """Represents details describing a work-related experience.
+    """
+
+    company: str
+
+
+class Volunteer(Experience):
+    """Represents details describing a volunteer-related experience.
+    """
+
+    organization: str
+
+
+# =============================================================================
+# Ability
+
+
+class Language(Model):
+    """Represents details describing language spoken.
+    """
+
+    language: str = "English"
+    fluency: str
+
+
+class Skill(NamedKeywords):
+    """Represents details describing skill.
+    """
+
+    level: str
+
+
+# =============================================================================
+# Rezume
+
+
 class Rezume(Model):
     """Represents resume data.
     """
@@ -108,5 +137,5 @@ class Rezume(Model):
     interests: Optional[List[NamedKeywords]]
     languages: Optional[List[Language]]
     skills: Optional[List[Skill]]
-    volunteer: Optional[List[Experience]]
-    work: Optional[List[Experience]]
+    volunteer: Optional[List[Volunteer]]
+    work: Optional[List[Work]]

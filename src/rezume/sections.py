@@ -88,7 +88,7 @@ class EducationSet(TimelinedSection):
     """
 
     def _generate_key(self, item: Education):
-        return f"{item.institution}:{item.study_area}:{item.study_type}"
+        return f"{item.institution}:{item.area}:{item.study_type}"
 
     def _sorter(self, item: Education):
         return item.start_date
@@ -99,10 +99,7 @@ class ExperienceSet(TimelinedSection):
     """
 
     def _generate_key(self, item: Experience):
-        key = f"{item.company}:{item.position}"
-        if item.start_date:
-            key += f":{item.start_date.strftime('%Y%m')}"
-        return key
+        return f"{item.start_date.strftime('%Y%m')}:{item.position}"
 
     def _sorter(self, item: Education):
         return item.start_date
