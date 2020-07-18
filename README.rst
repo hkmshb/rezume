@@ -11,7 +11,7 @@ Installation
 
 Install from `Pypi <https://pypi.org/project/rezume/>`_ by running this command:
 
-.. code-block::
+.. code-block:: bash
 
     pip install rezume
 
@@ -28,7 +28,7 @@ Usage
 
 You can use ``rezume`` as a Python package as shown below:
 
-.. code-block::
+.. code-block:: python
 
     from rezume import RezumeError, Rezume
 
@@ -51,7 +51,7 @@ You can use ``rezume`` as a Python package as shown below:
 
 To validate a rezume file instead:
 
-.. code-block::
+.. code-block:: python
 
     from pathlib import Path
     from rezume import RezumeError, Rezume
@@ -62,13 +62,13 @@ To validate a rezume file instead:
     # use
     Rezume.is_valid(rezume_file)    # returns boolean
 
-    or
+    # or
     Rezume.validate(rezume_file)    # throws exception if invalid
 
 
 Furthermore, you can programmatically process a Rezume:
 
-.. code-block::
+.. code-block:: python
 
     import json
     from pathlib import Path
@@ -103,7 +103,7 @@ Furthermore, you can programmatically process a Rezume:
 In addition, ``rezume`` can be used as a command line tool to create or validate
 a YAML-based rezume file. Here is the output of ``rezume --help``
 
-.. code-block::
+.. code-block:: bash
 
     Usage: rezume [OPTIONS] COMMAND [ARGS]...
 
