@@ -16,11 +16,11 @@ class TestCommand(Command):
     def run(self) -> None:
         if not self.filename.exists():
             typer.secho(f"Rezume not found: {self.filename}", fg=typer.colors.RED)
-            raise typer.Exit()
+            self.exit()
 
         try:
-            Rezume().load(self.filename)
-            typer.secho("Valid!\n", fg=typer.colors.GREEN)
+            Rezume.validate(self.filename)
+            typer.secho("Rezume is valid!\n", fg=typer.colors.GREEN)
         except RezumeError as ex:
             typer.secho(f"{ex}\n", fg=typer.colors.RED)
 

@@ -11,6 +11,11 @@ class Command:
     """Represents the class for all rezume commands
     """
 
+    def exit(self) -> None:
+        """Raise typer Exit exception which terminates a running typer app.
+        """
+        raise typer.Exit()
+
     def run(self) -> None:
         """Executes the logic for a command.
         """

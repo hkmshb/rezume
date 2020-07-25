@@ -35,7 +35,7 @@ class InitCommand(Command):
             )
         except RezumeError as ex:
             typer.secho(f"\nerror: {ex}")
-            raise typer.Exit()
+            self.exit()
 
     def get_details(self) -> dict:
         typer.secho(
@@ -61,7 +61,7 @@ class InitCommand(Command):
             )
             overwrite = typer.confirm("Do you want to overwrite?")
             if not overwrite:
-                raise typer.Exit()
+                self.exit()
 
         self.create()
 
