@@ -1,27 +1,14 @@
 import typer
 from pathlib import Path
-from .. import Rezume, RezumeError
+from ... import Rezume, RezumeError
+from . import Command, DEFAULT_FILENAME
 
 
-app = typer.Typer()
-
-# defaults
-DEFAULT_FILENAME = typer.Argument(Path("./rezume.yml"))
-
-
-class Command:
-    """Represents the class for all rezume commands
-    """
-
-    def run(self) -> None:
-        """Executes the logic for a command.
-        """
-        raise NotImplementedError()
-
-
-class InitCommand:
+class InitCommand(Command):
     """Initialize a new rezume.yml file
     """
+
+    name = "init"
 
     def __init__(self, filename: Path):
         self.filename = filename
@@ -79,36 +66,8 @@ class InitCommand:
         self.create()
 
     @staticmethod
-    @app.command("init")
     def handler(filename: Path = DEFAULT_FILENAME):
         """Initializes a new rezume.yml file
         """
         command = InitCommand(filename)
-        command.run()
-
-
-class TestCommand:
-    """Validates correctness of a rezume.yml file
-    """
-
-    def __init__(self, filename: Path):
-        self.filename = filename
-
-    def run(self) -> None:
-        if not self.filename.exists():
-            typer.secho(f"Rezume not found: {self.filename}", fg=typer.colors.RED)
-            raise typer.Exit()
-
-        try:
-            Rezume().load(self.filename)
-            typer.secho("Valid!\n", fg=typer.colors.GREEN)
-        except RezumeError as ex:
-            typer.secho(f"{ex}\n", fg=typer.colors.RED)
-
-    @staticmethod
-    @app.command("test")
-    def handler(filename: Path = DEFAULT_FILENAME):
-        """Validates correctness of a rezume.yml file
-        """
-        command = TestCommand(filename)
         command.run()

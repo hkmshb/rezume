@@ -26,4 +26,4 @@ pytest = "^5.4.3"
 pytest-cov = "^2.10.0"
 
 [tool.poetry.scripts]
-rezume = "rezume.cli:app"
+rezume = "rezume.cli:main"
