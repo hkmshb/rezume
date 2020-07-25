@@ -1,7 +1,7 @@
 rezume
 ======
 
-``Rezume`` is a Python library to validate and easily create a `YAML <https://yaml.org>`_
+Rezume is a Python library to validate and easily create a `YAML <https://yaml.org>`_
 based resume file that is `JSON Resume <https://jsonresume.org>`_ compatible according to
 the `defined schema <https://jsoonresume.org/schema>`_.
 
@@ -19,7 +19,7 @@ Install from `Pypi <https://pypi.org/project/rezume/>`_ by running this command:
 Dependencies
 ^^^^^^^^^^^^
 
-``Rezume`` requires Python 3.6+ and depends mainly on `pydantic <https://pypi.org/project/pydandic>`_
+Rezume requires Python 3.6+ and depends mainly on `pydantic <https://pypi.org/project/pydandic>`_
 for data validation and `pyyaml <https://pypi.org/project/>`_ for processing YAML data.
 
 
