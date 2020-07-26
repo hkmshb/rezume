@@ -28,7 +28,7 @@ Usage
 
 You can use ``rezume`` as a Python package as shown below:
 
-.. code-block::
+.. code-block:: python
 
     from rezume import RezumeError, Rezume
 
@@ -51,7 +51,7 @@ You can use ``rezume`` as a Python package as shown below:
 
 To validate a rezume file instead:
 
-.. code-block::
+.. code-block:: python
 
     from pathlib import Path
     from rezume import RezumeError, Rezume
@@ -68,7 +68,7 @@ To validate a rezume file instead:
 
 Furthermore, you can programmatically process a Rezume:
 
-.. code-block::
+.. code-block:: python
 
     import json
     from pathlib import Path
@@ -103,20 +103,21 @@ Furthermore, you can programmatically process a Rezume:
 In addition, ``rezume`` can be used as a command line tool to create or validate
 a YAML-based rezume file. Here is the output of ``rezume --help``
 
-.. code-block::
+.. code-block:: bash
 
     Usage: rezume [OPTIONS] COMMAND [ARGS]...
 
     Options:
-    --install-completion  Install completion for the current shell.
-    --show-completion     Show completion for the current shell, to copy it or
-                            customize the installation.
+      --install-completion  Install completion for the current shell.
+      --show-completion     Show completion for the current shell, to copy it or
+                              customize the installation.
 
-    --help                Show this message and exit.
+      --help                Show this message and exit.
 
     Commands:
-    init  Initializes a new rezume.yml file
-    test  Validates correctness of a rezume.yml file
+      init   Initializes a new rezume.yml file
+      serve  Serves a rezume for local viewing applying available themes
+      test   Validates correctness of a rezume.yml file
 
 
 License
