@@ -27,3 +27,6 @@ pytest-cov = "^2.10.0"
 
 [tool.poetry.scripts]
 rezume = "rezume.cli:main"
+
+[tool.coverage.run]
+omit = [ "*/itty3.py", "*/cli/__init__.py" ]
