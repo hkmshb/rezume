@@ -11,7 +11,7 @@ Installation
 
 Install from `Pypi <https://pypi.org/project/rezume/>`_ by running this command:
 
-.. code-block::
+.. code-block:: bash
 
     pip install rezume
 
@@ -62,7 +62,7 @@ To validate a rezume file instead:
     # use
     Rezume.is_valid(rezume_file)    # returns boolean
 
-    or
+    # or
     Rezume.validate(rezume_file)    # throws exception if invalid
 
 
