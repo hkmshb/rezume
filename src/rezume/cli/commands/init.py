@@ -1,3 +1,4 @@
+import sys
 import typer
 from pathlib import Path
 from ... import Rezume, RezumeError
@@ -13,20 +14,20 @@ class InitCommand(Command):
     def __init__(self, filename: Path):
         self.filename = filename
 
-    def create(self) -> None:
+    def create(self, name: str, email: str) -> None:
         """Creates a new rezume.yml file based on the template rezume.
         """
-        root_dir = Path(__file__).resolve().parents[1]
-        template = root_dir / "assets/rezume-template.yml"
-
-        entries = self.get_details()
+        template_path = InitCommand.get_template_path()
+        if not template_path.exists():
+            typer.secho("\nrezume template file not found.\n", fg=typer.colors.RED)
+            self.exit()
 
         try:
             rezume = Rezume()
-            rezume.load(template)
+            rezume.load(template_path)
 
-            for field, value in entries.items():
-                setattr(rezume, field, value)
+            rezume.name = name
+            rezume.email = email
 
             rezume.save(self.filename, overwrite=True, exclude_none=True)
             typer.secho(
@@ -63,7 +64,17 @@ class InitCommand(Command):
             if not overwrite:
                 self.exit()
 
-        self.create()
+        entries = self.get_details()
+        self.create(**entries)
+
+    @staticmethod
+    def get_template_path() -> Path:
+        """Returns path to rezume-template.yml file.
+        """
+        rezume_module = sys.modules["rezume"]
+
+        root_dir = Path(rezume_module.__file__).parent
+        return root_dir / "assets/rezume-template.yml"
 
     @staticmethod
     def handler(filename: Path = DEFAULT_FILENAME):

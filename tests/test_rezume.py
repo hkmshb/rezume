@@ -8,7 +8,9 @@ from rezume.models import Education, Experience
 
 
 def test_version():
-    assert get_version() == "0.4.0"
+    version = get_version()
+    assert version is not None
+    assert len(version.split(".")) == 3
 
 
 class TestResume:
