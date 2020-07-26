@@ -11,7 +11,7 @@ __pycache__/
 *.code-workspace
 
 # misc
+*.bak
 *.log
 [.-]tmp
 [.-]tox
-Makefile.bak

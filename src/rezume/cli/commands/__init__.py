@@ -25,5 +25,6 @@ class Command:
 # flake8: noqa
 from .init import InitCommand
 from .test import TestCommand
+from .serve import ServeCommand
 
-registry = [Command, InitCommand, TestCommand]
+registry = [Command, InitCommand, TestCommand, ServeCommand]
