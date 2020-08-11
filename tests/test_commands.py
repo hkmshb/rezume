@@ -2,11 +2,15 @@ import sys
 import types
 from pathlib import Path
 
+import pretend
 import pytest
+from typer.testing import CliRunner
 
 import rezume
 from rezume import Rezume
+from rezume.cli import create_app, registry
 from rezume.cli.commands.init import InitCommand
+from rezume.cli.commands.serve import ServeCommand
 from rezume.cli.commands.serve import find_theme_module, render_rezume
 
 
@@ -57,3 +61,57 @@ def test_render_rezume(sample_rezume, theme_name, has_result):
     rezume = Rezume().load_data(sample_rezume)
     result = render_rezume(rezume, theme_name)
     assert isinstance(result, str) == has_result
+
+
+class TestCommands:
+    runner = CliRunner()
+
+    def test_init_with_valid_inputs(self, monkeypatch):
+        # stub out InitCommand functions
+        init_create = pretend.call_recorder(lambda *a, **kw: None)
+        monkeypatch.setattr(InitCommand, "create", init_create)
+
+        # clear registry and add patched command
+        registry.clear()
+        registry.append(InitCommand)
+        registry.append(ServeCommand)
+
+        # invoke command through runner
+        inputs = "john\njohn@d.com\n"
+        create_calls = pretend.call(name="john", email="john@d.com")
+
+        result = self.runner.invoke(create_app(), ["init"], input=inputs)
+        assert result.exit_code == 0
+        assert init_create.calls[0].kwargs == create_calls.kwargs
+
+    @pytest.mark.parametrize(
+        "args, filename, theme, port",
+        [
+            (["serve"], "rezume.yml", "", 7770),
+            (["serve", "imb.yml"], "imb.yml", "", 7770),
+            (
+                ["serve", "--theme", "onepage", "--port", 8000],
+                "rezume.yml",
+                "onepage",
+                8000,
+            ),
+        ],
+    )
+    def test_serve_with_valid_inputs(self, monkeypatch, args, filename, theme, port):
+        # stub out ServeCommand functions
+        serve_run = pretend.call_recorder(lambda *a, **kw: None)
+        monkeypatch.setattr(ServeCommand, "run", serve_run)
+
+        # clear registry and add patched command
+        registry.clear()
+        registry.append(InitCommand)
+        registry.append(ServeCommand)
+
+        # invoke command through runner
+        result = self.runner.invoke(create_app(), args)
+        assert result.exit_code == 0
+
+        serve_obj = serve_run.calls[0].args[0]
+        assert serve_obj.filename.name == filename
+        assert serve_obj.theme == theme
+        assert serve_obj.port == port

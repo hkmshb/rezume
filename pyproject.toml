@@ -24,6 +24,7 @@ black = "^19.10b0"
 mypy = "^0.782"
 pytest = "^5.4.3"
 pytest-cov = "^2.10.0"
+pretend = "^1.0.9"
 
 [tool.poetry.scripts]
 rezume = "rezume.cli:main"

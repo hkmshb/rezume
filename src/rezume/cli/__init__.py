@@ -2,13 +2,17 @@ import typer
 from .commands import registry
 
 
-def main():
+def create_app():
     app = typer.Typer()
-
     for cmd in registry:
         if hasattr(cmd, "name") and hasattr(cmd, "handler"):
             app.command(cmd.name)(cmd.handler)
 
+    return app
+
+
+def main():
+    app = create_app()
     app()
 
 
