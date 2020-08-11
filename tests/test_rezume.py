@@ -1,6 +1,5 @@
 import pytest
 from pathlib import Path
-from copy import deepcopy
 from pydantic import ValidationError
 
 from rezume import get_version, Rezume, RezumeError
@@ -14,41 +13,6 @@ def test_version():
 
 
 class TestResume:
-
-    rezume_mini = Path("./tests/fixtures/rezume-mini.yml")
-
-    sample_rezume = {
-        "basics": {
-            "name": "John Doe",
-            "label": "Programmer",
-            "email": "john@doe.com",
-            "phone": "0807-0000-1111",
-            "website": "http://johndoe.com",
-            "summary": "A summary of john doe...",
-            "location": {
-                "address": "276 Alu Avenue",
-                "postal_code": "KN 700214",
-                "city": "Kano",
-                "region": "Kano State",
-                "country_code": "NG",
-            },
-            "profiles": [
-                {
-                    "network": "twitter",
-                    "username": "john",
-                    "url": "http://twitter.com/john",
-                }
-            ],
-        },
-        "education": [
-            {
-                "institution": "University",
-                "area": "Software Engineering",
-                "startDate": "2020-07-05",
-            }
-        ],
-    }
-
     def test_instance_is_prepopulated_with_data_sections(self):
         rezume = Rezume()
         assert len(rezume) > 0
@@ -94,23 +58,20 @@ class TestResume:
         with pytest.raises(RezumeError):
             rezume.discard_item("work", item)
 
-    def test_loading_malformed_non_optional_rezume_data_fails(self):
-        data = deepcopy(self.sample_rezume)
-        del data["basics"]["location"]
+    def test_loading_malformed_non_optional_rezume_data_fails(self, sample_rezume):
+        del sample_rezume["basics"]["location"]
 
         rezume = Rezume()
         with pytest.raises(ValidationError):
-            rezume.load_data(data)
+            rezume.load_data(sample_rezume)
 
-    def test_can_load_wellformed_non_optional_rezume_data(self):
-        data = deepcopy(self.sample_rezume)
-
+    def test_can_load_wellformed_non_optional_rezume_data(self, sample_rezume):
         try:
             rezume = Rezume()
             assert len(rezume.profiles) == 0
             assert len(rezume["education"]) == 0
 
-            rezume.load_data(data)
+            rezume.load_data(sample_rezume)
             assert len(rezume.profiles) == 1
             assert len(rezume["education"]) == 1
         except Exception as ex:
@@ -160,30 +121,28 @@ class TestResume:
         assert len(rezume.profiles) == 1
         assert len(rezume["education"]) == 1
 
-    def test_save_fails_without_overwrite_to_existing_file(self):
+    def test_save_fails_without_overwrite_to_existing_file(self, rezume_mini):
         rezume = Rezume()
-        fpath = self.rezume_mini
+        rezume.load(rezume_mini)
 
-        rezume.load(fpath)
         with pytest.raises(RezumeError):
-            rezume.save(fpath)
+            rezume.save(rezume_mini)
 
-    def test_can_save_to_exiting_file_with_overwrite(self):
+    def test_can_save_to_exiting_file_with_overwrite(self, rezume_mini):
         rezume = Rezume()
-        fpath = self.rezume_mini
+        rezume.load(rezume_mini)
 
-        rezume.load(fpath)
         try:
-            rezume.save(fpath, True)
+            rezume.save(rezume_mini, True)
         except Exception as ex:
             pytest.fail(f"Exception not expected: {ex}")
 
-    def test_load_acts_fluent_by_returning_instance(self):
-        rezume = Rezume().load(self.rezume_mini)
+    def test_load_acts_fluent_by_returning_instance(self, rezume_mini):
+        rezume = Rezume().load(rezume_mini)
         assert rezume is not None
 
-    def test_load_data_acts_fluent_by_returning_instance(self):
-        rezume = Rezume().load_data(deepcopy(self.sample_rezume))
+    def test_load_data_acts_fluent_by_returning_instance(self, sample_rezume):
+        rezume = Rezume().load_data(sample_rezume)
         assert rezume is not None
 
     def test_personal_details_are_validated_on_dump(self):
@@ -194,8 +153,8 @@ class TestResume:
         with pytest.raises(ValidationError):
             rezume.dump_data()
 
-    def test_rezume_is_validate_before_dump(self):
-        rezume = Rezume().load_data(deepcopy(self.sample_rezume))
+    def test_rezume_is_validate_before_dump(self, sample_rezume):
+        rezume = Rezume().load_data(sample_rezume)
         section = rezume["education"]
 
         assert section is not None
@@ -211,22 +170,20 @@ class TestResume:
         with pytest.raises(RezumeError):
             rezume.dump_data()
 
-    def test_can_validate_file_via_validate_api(self):
+    def test_can_validate_file_via_validate_api(self, rezume_mini):
         try:
-            Rezume.validate(self.rezume_mini)
+            Rezume.validate(rezume_mini)
         except Exception as ex:
             pytest.fail(f"Exception not expected: {ex}")
 
-    def test_can_validate_data_via_validate_api(self):
+    def test_can_validate_data_via_validate_api(self, sample_rezume):
         try:
-            data = deepcopy(self.sample_rezume)
-            Rezume.validate(data)
+            Rezume.validate(sample_rezume)
         except Exception as ex:
             pytest.fail(f"Exception not expected: {ex}")
 
-    def test_can_validate_file_via_is_valid_api(self):
-        assert Rezume.is_valid(self.rezume_mini) is True
+    def test_can_validate_file_via_is_valid_api(self, rezume_mini):
+        assert Rezume.is_valid(rezume_mini) is True
 
-    def test_can_validate_data_via_is_valid_api(self):
-        data = deepcopy(self.sample_rezume)
-        assert Rezume.is_valid(data) is True
+    def test_can_validate_data_via_is_valid_api(self, sample_rezume):
+        assert Rezume.is_valid(sample_rezume) is True

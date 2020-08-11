@@ -29,4 +29,8 @@ pytest-cov = "^2.10.0"
 rezume = "rezume.cli:main"
 
 [tool.coverage.run]
-omit = [ "*/itty3.py", "*/cli/__init__.py" ]
+omit = [
+    "*/itty3.py",
+    "*/cli/__init__.py",
+    "*/cli/commands/__init__.py"
+]

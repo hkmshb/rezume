@@ -12,6 +12,39 @@ from . import itty3
 log = logging.getLogger(__name__)
 
 
+def find_theme_module(theme: str):
+    """Locate and returns rezume theme package (or module).
+
+    :param str theme: name of rezume theme
+    :return: module for rendering named theme if found, otherwise None
+    """
+    pkg_name = f"rezume_theme_{theme}"
+    infos = list(filter(lambda p: p.name.startswith(pkg_name), pkgutil.iter_modules()))
+
+    if not infos:
+        return None
+
+    [finder, name, _] = infos[0]
+    return finder.find_module(name).load_module(name)
+
+
+def render_rezume(rezume: Rezume, theme: str):
+    """Renders a Rezume based on a specified theme.
+
+    :param rezume: rezume to be rendered
+    :type rezume: class:`rezume.Rezume`
+    :param theme: rezume theme name
+    :type theme: str
+
+    :return: rendered rezume based on specified theme if found, otherwise return None
+    """
+    module = find_theme_module(theme)
+    if module and hasattr(module, "render"):
+        return module.render(rezume)
+
+    return None
+
+
 class ServeCommand(Command):
     """Serves a rezume for local viewing applying available themes.
     """
@@ -22,20 +55,6 @@ class ServeCommand(Command):
         self.filename = filename
         self.theme = theme
         self.port = port
-
-    def get_theme_module(self, theme):
-        """Locates and returns rezume theme package/module.
-        """
-        pkg_name = f"rezume_theme_{theme}"
-        infos = list(
-            filter(lambda p: p.name.startswith(pkg_name), pkgutil.iter_modules())
-        )
-
-        if not infos:
-            return None
-
-        [finder, name, _] = infos[0]
-        return finder.find_module(name).load_module(name)
 
     def route_index(self, req):
         """HTTP GET request handler for the root route.
@@ -48,9 +67,9 @@ class ServeCommand(Command):
             # read rezume on every request to allow showing updates
             rezume = Rezume().load(self.filename)
 
-            module = self.get_theme_module(theme)
-            if module and hasattr(module, "render"):
-                return self.app.render(req, module.render(rezume))
+            rezume_html = render_rezume(rezume, theme)
+            if rezume_html:
+                return self.app.render(req, rezume_html)
 
             # send rezume as json data when theme not available
             json_data = json.dumps(rezume.dump_data())
