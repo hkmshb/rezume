@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "rezume"
-version = "0.4.1"
+version = "0.4.2"
 description = "Rezume, validate and create text-based resumes easily."
 authors = ["Abdul-Hakeem Shaibu <s.abdulhakeeem@gmail.com>"]
 license = "BSD-2-Clause"
@@ -15,15 +15,15 @@ keywords = [ "resume", "rezume" ]
 
 [tool.poetry.dependencies]
 python = "^3.6"
-pydantic = {version = "^1.5.1", extras = ["email"]}
-pyyaml = "^5.3.1"
-typer = {version = "^0.3.0", extras = ["all"]}
+pydantic = {version = "^1.7.3", extras = ["email"]}
+pyyaml = "^5.4.1"
+typer = {version = "^0.3.2", extras = ["all"]}
 
 [tool.poetry.dev-dependencies]
-black = "^19.10b0"
-mypy = "^0.782"
-pytest = "^5.4.3"
-pytest-cov = "^2.10.0"
+black = "^20.8b1"
+mypy = "^0.812"
+pytest = "^6.2.2"
+pytest-cov = "^2.11.1"
 pretend = "^1.0.9"
 
 [tool.poetry.scripts]
@@ -35,3 +35,6 @@ omit = [
     "*/cli/__init__.py",
     "*/cli/commands/__init__.py"
 ]
+
+[tool.pytest.ini_options]
+testpath = "tests"

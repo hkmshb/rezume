@@ -1,7 +1,13 @@
-.PHONY: lint test
+TOX := pipx run tox
 
-lint:
-	tox -e lint
+.PHONY: help lint test
 
-test:
-	tox -e test
+# source: https://victoria.dev/blog/django-project-best-practices-to-keep-your-developers-happy/
+help: ## Show this help
+	@egrep -h '\s##\s' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+
+lint: ## Run linter through project
+	$(TOX) -e lint
+
+test: ## Run unit tests for project
+	$(TOX) -e test
