@@ -1,0 +1,22 @@
+name: Publish
+on:
+  release:
+    types:
+      - created
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          set -ex
+          python -m pip install --upgrade pip
+          python -m pip install poetry
+      - name: Publish
+        run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+          poetry publish --build
