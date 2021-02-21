@@ -1,13 +1,13 @@
 import json
-import typer
 import logging
 import pkgutil
 from pathlib import Path
 
-from .... import Rezume, RezumeError
-from .. import Command, DEFAULT_FILENAME
-from . import itty3
+import typer
 
+from .... import Rezume, RezumeError
+from .. import DEFAULT_FILENAME, Command
+from . import itty3
 
 log = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ def find_theme_module(theme: str):
         return None
 
     [finder, name, _] = infos[0]
-    return finder.find_module(name).load_module(name)
+    return finder.find_module(name).load_module(name)  # type: ignore
 
 
 def render_rezume(rezume: Rezume, theme: str):
@@ -46,8 +46,7 @@ def render_rezume(rezume: Rezume, theme: str):
 
 
 class ServeCommand(Command):
-    """Serves a rezume for local viewing applying available themes.
-    """
+    """Serves a rezume for local viewing applying available themes."""
 
     name = "serve"
 
@@ -57,8 +56,7 @@ class ServeCommand(Command):
         self.port = port
 
     def route_index(self, req):
-        """HTTP GET request handler for the root route.
-        """
+        """HTTP GET request handler for the root route."""
         theme = self.theme
         if req.query and "theme" in req.query:
             theme = req.query["theme"][0]
@@ -106,7 +104,6 @@ class ServeCommand(Command):
             7770, help="Port number to serve content to on localhost"
         ),
     ):
-        """Serves a rezume for local viewing applying available themes
-        """
+        """Serves a rezume for local viewing applying available themes"""
         command = ServeCommand(filename, theme, port)
         command.run()

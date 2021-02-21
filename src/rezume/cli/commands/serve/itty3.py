@@ -18,7 +18,6 @@ import urllib.parse
 import wsgiref.headers
 import wsgiref.util
 
-
 __author__ = "Daniel Lindsley"
 __version__ = (
     1,
@@ -377,9 +376,7 @@ class HttpRequest(object):
 
         # We need to do a bit more work to make the query portion useful.
         if bits.query:
-            uri_data["query"] = urllib.parse.parse_qs(
-                bits.query, keep_blank_values=True
-            )
+            uri_data["query"] = urllib.parse.parse_qs(bits.query, keep_blank_values=True)
 
         if bits.netloc:
             uri_data["netloc"] = bits.netloc
@@ -569,7 +566,11 @@ class HttpResponse(object):
     """
 
     def __init__(
-        self, body="", status_code=200, headers=None, content_type=PLAIN,
+        self,
+        body="",
+        status_code=200,
+        headers=None,
+        content_type=PLAIN,
     ):
         self.body = body
         self.status_code = int(status_code)
@@ -716,7 +717,8 @@ class HttpResponse(object):
             )
 
         status = "{} {}".format(
-            self.status_code, RESPONSE_CODES.get(self.status_code, RESPONSE_CODES[500]),
+            self.status_code,
+            RESPONSE_CODES.get(self.status_code, RESPONSE_CODES[500]),
         )
         headers = [(k, v) for k, v in self.headers.items()]
         possible_cookies = self._cookies.output()
@@ -778,7 +780,10 @@ class Route(object):
         self._regex, self._type_conversions = self.create_re(self.path)
 
     def __str__(self):
-        return "<Route: {} for '{}'>".format(self.method, self.path,)
+        return "<Route: {} for '{}'>".format(
+            self.method,
+            self.path,
+        )
 
     def __repr__(self):
         return str(self)
@@ -1003,7 +1008,12 @@ class App(object):
             pass
 
     def render(
-        self, request, body, status_code=200, content_type=HTML, headers=None,
+        self,
+        request,
+        body,
+        status_code=200,
+        content_type=HTML,
+        headers=None,
     ):
         """
         A convenience method for creating a `HttpResponse` object.
@@ -1029,7 +1039,12 @@ class App(object):
         )
 
     def render_json(
-        self, request, data, status_code=200, content_type=JSON, headers=None,
+        self,
+        request,
+        data,
+        status_code=200,
+        content_type=JSON,
+        headers=None,
     ):
         """
         A convenience method for creating a JSON `HttpResponse` object.
@@ -1130,9 +1145,7 @@ class App(object):
             content = raw_file.read()
             content_length = len(content)
 
-            if content_type.startswith("application") or content_type.startswith(
-                "text"
-            ):
+            if content_type.startswith("application") or content_type.startswith("text"):
                 content = content.decode("utf-8")
 
         # Approximate the content-length.
@@ -1316,9 +1329,7 @@ class App(object):
         """
         request = self.create_request(environ)
         self.log.debug(
-            "Started processing request for {} {}...".format(
-                request.method, request.path
-            )
+            "Started processing request for {} {}...".format(request.method, request.path)
         )
         resp = None
 
@@ -1337,9 +1348,7 @@ class App(object):
                     )
                     kwargs = route.extract_kwargs(request.path)
                     self.log.debug(
-                        "Calling {} with arguments {}".format(
-                            route.func.__name__, kwargs
-                        )
+                        "Calling {} with arguments {}".format(route.func.__name__, kwargs)
                     )
                     resp = route.func(request, **kwargs)
                     break
@@ -1393,9 +1402,7 @@ class App(object):
                 pass
 
         self.log.removeHandler(null_handler)
-        default_format = logging.Formatter(
-            "%(asctime)s %(name)s %(levelname)s %(message)s"
-        )
+        default_format = logging.Formatter("%(asctime)s %(name)s %(levelname)s %(message)s")
         stdout_handler = logging.StreamHandler()
         stdout_handler.setFormatter(default_format)
         self.log.addHandler(stdout_handler)

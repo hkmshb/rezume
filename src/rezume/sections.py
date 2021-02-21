@@ -1,5 +1,6 @@
 from collections.abc import MutableSet
 from typing import Any, Iterable, Optional
+
 from pydantic import EmailStr, HttpUrl
 
 from .base import RezumeError
@@ -10,16 +11,15 @@ from .models import (
     Experience,
     Language,
     Location,
-    Publication,
     NamedKeywords,
     Profile,
+    Publication,
     Reference,
 )
 
 
 class Section(MutableSet):
-    """Represents a section within a Resume.
-    """
+    """Represents a section within a Resume."""
 
     def __init__(self, items: Iterable[Any] = None):
         self._items = {self._generate_key(i): i for i in items or []}
@@ -53,8 +53,7 @@ class Section(MutableSet):
 
 
 class NamedSection(Section):
-    """Represents a named section within a Resume.
-    """
+    """Represents a named section within a Resume."""
 
     def __init__(self, name: str, items: Iterable[Any] = None):
         super().__init__(items)
@@ -76,16 +75,14 @@ class TimelinedSection(NamedSection):
 
 
 class NamedKeywordsSet(NamedSection):
-    """Represents a set of named keyworks.
-    """
+    """Represents a set of named keyworks."""
 
     def _generate_key(self, item: NamedKeywords):
         return item.name
 
 
 class AwardSet(NamedSection):
-    """Represents a set of wards.
-    """
+    """Represents a set of wards."""
 
     def _generate_key(self, item: Award) -> str:
         return f"{item.title}:{item.awarder}"
@@ -95,8 +92,7 @@ class AwardSet(NamedSection):
 
 
 class ProfileSet(Section):
-    """Represents a set of profiles.
-    """
+    """Represents a set of profiles."""
 
     def _generate_key(self, item: Profile) -> str:
         return item.network
@@ -106,8 +102,7 @@ class ProfileSet(Section):
 
 
 class EducationSet(TimelinedSection):
-    """Represents a set of details describing educational qualifications.
-    """
+    """Represents a set of details describing educational qualifications."""
 
     def _generate_key(self, item: Education):
         return f"{item.institution}:{item.area}:{item.study_type}"
@@ -117,8 +112,7 @@ class EducationSet(TimelinedSection):
 
 
 class ExperienceSet(TimelinedSection):
-    """Represents a set of details describing work related experiences.
-    """
+    """Represents a set of details describing work related experiences."""
 
     def _generate_key(self, item: Experience):
         return f"{item.start_date.strftime('%Y%m')}:{item.position}"
@@ -128,16 +122,14 @@ class ExperienceSet(TimelinedSection):
 
 
 class LanguageSet(NamedSection):
-    """Represents a set of spoken languages.
-    """
+    """Represents a set of spoken languages."""
 
     def _generate_key(self, item: Language):
         return item.language
 
 
 class PublicationSet(NamedSection):
-    """Represents a set of publications.
-    """
+    """Represents a set of publications."""
 
     def _generate_key(self, item: Publication) -> str:
         return f"{item.name}:{item.publisher}"
@@ -147,8 +139,7 @@ class PublicationSet(NamedSection):
 
 
 class ReferenceSet(NamedSection):
-    """Represents a set of references.
-    """
+    """Represents a set of references."""
 
     def _generate_key(self, item: Reference) -> str:
         return f"{item.name}"
@@ -166,12 +157,12 @@ class RezumeBase(Section):
         super().__init__(items)
         self.name: str = ""
         self.label: str = ""
-        self.email: EmailStr = ""
+        self.email: EmailStr = EmailStr("")
         self.location: Location = Location.construct()
         self.phone: Optional[str] = ""
         self.picture: Optional[str] = ""
         self.summary: Optional[str] = ""
-        self.website: Optional[HttpUrl] = ""
+        self.website: Optional[HttpUrl] = None
 
     @property
     def profiles(self) -> ProfileSet:
@@ -181,8 +172,7 @@ class RezumeBase(Section):
 
     @property
     def sections(self) -> Iterable[NamedSection]:
-        """Returns the sections within a resume.
-        """
+        """Returns the sections within a resume."""
         return self._items.values()
 
     def __getitem__(self, section_name):
@@ -194,8 +184,7 @@ class RezumeBase(Section):
         return section.name
 
     def add_item(self, section_name: str, item: Any):
-        """Adds an item for the specified rezume section.
-        """
+        """Adds an item for the specified rezume section."""
         section = self[section_name]
         # is None is used deliberately below as an empty section is
         # regarded as a falsy which is not the expected outcome here
@@ -204,16 +193,14 @@ class RezumeBase(Section):
         section.add(item)
 
     def discard_item(self, section_name: str, item: Any):
-        """Discards an item for the specified rezume section.
-        """
+        """Discards an item for the specified rezume section."""
         section = self[section_name]
         if section is None:
             raise RezumeError(f"Section not found: {section_name}")
         section.discard(item)
 
     def clear_section(self, section_name: str):
-        """Clears the items for the specified rezume section.
-        """
+        """Clears the items for the specified rezume section."""
         section = self[section_name]
         if not section:
             raise RezumeError(f"Section not found: {section_name}")

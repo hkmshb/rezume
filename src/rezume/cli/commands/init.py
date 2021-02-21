@@ -1,13 +1,15 @@
 import sys
-import typer
 from pathlib import Path
+
+import typer
+from pydantic import EmailStr
+
 from ... import Rezume, RezumeError
-from . import Command, DEFAULT_FILENAME
+from . import DEFAULT_FILENAME, Command
 
 
 class InitCommand(Command):
-    """Initialize a new rezume.yml file
-    """
+    """Initialize a new rezume.yml file"""
 
     name = "init"
 
@@ -15,8 +17,7 @@ class InitCommand(Command):
         self.filename = filename
 
     def create(self, name: str, email: str) -> None:
-        """Creates a new rezume.yml file based on the template rezume.
-        """
+        """Creates a new rezume.yml file based on the template rezume."""
         template_path = InitCommand.get_template_path()
         if not template_path.exists():
             typer.secho("\nrezume template file not found.\n", fg=typer.colors.RED)
@@ -27,7 +28,7 @@ class InitCommand(Command):
             rezume.load(template_path)
 
             rezume.name = name
-            rezume.email = email
+            rezume.email = EmailStr(email)
 
             rezume.save(self.filename, overwrite=True, exclude_none=True)
             typer.secho(
@@ -69,8 +70,7 @@ class InitCommand(Command):
 
     @staticmethod
     def get_template_path() -> Path:
-        """Returns path to rezume-template.yml file.
-        """
+        """Returns path to rezume-template.yml file."""
         rezume_module = sys.modules["rezume"]
 
         root_dir = Path(rezume_module.__file__).parent
@@ -78,7 +78,6 @@ class InitCommand(Command):
 
     @staticmethod
     def handler(filename: Path = DEFAULT_FILENAME):
-        """Initializes a new rezume.yml file
-        """
+        """Initializes a new rezume.yml file"""
         command = InitCommand(filename)
         command.run()

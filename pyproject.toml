@@ -29,12 +29,20 @@ pretend = "^1.0.9"
 [tool.poetry.scripts]
 rezume = "rezume.cli:main"
 
+[tool.black]
+line-length = 96
+quite = true
+version = true
+
 [tool.coverage.run]
 omit = [
     "*/itty3.py",
     "*/cli/__init__.py",
     "*/cli/commands/__init__.py"
 ]
+
+[tool.isort]
+profile = "black"
 
 [tool.pytest.ini_options]
 testpath = "tests"

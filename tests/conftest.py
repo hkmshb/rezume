@@ -6,15 +6,13 @@ import pytest
 
 @pytest.fixture
 def rezume_mini():
-    """Returns the path to the rezume-mini.yml fixture file.
-    """
+    """Returns the path to the rezume-mini.yml fixture file."""
     return Path("./tests/fixtures/rezume-mini.yml")
 
 
 @pytest.fixture
 def sample_rezume():
-    """Returns the data for a sample rezume as a dict.
-    """
+    """Returns the data for a sample rezume as a dict."""
     return deepcopy(
         {
             "basics": {
