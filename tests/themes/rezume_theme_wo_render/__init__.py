@@ -1,4 +1,3 @@
 def main():
-    """Dummy useless function.
-    """
+    """Dummy useless function."""
     pass

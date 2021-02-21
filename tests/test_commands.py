@@ -10,13 +10,11 @@ import rezume
 from rezume import Rezume
 from rezume.cli import create_app, registry
 from rezume.cli.commands.init import InitCommand
-from rezume.cli.commands.serve import ServeCommand
-from rezume.cli.commands.serve import find_theme_module, render_rezume
+from rezume.cli.commands.serve import ServeCommand, find_theme_module, render_rezume
 
 
 def test_presense_of_rezume_template():
-    """Checks that packaging includes necessary static assets to function properly.
-    """
+    """Checks that packaging includes necessary static assets to function properly."""
     root_dir = Path(rezume.__file__).parent
     template = root_dir / "assets/rezume-template.yml"
     assert template.exists()
@@ -24,8 +22,7 @@ def test_presense_of_rezume_template():
 
 
 def test_init_command_can_access_template():
-    """Checks that the init command can access and use the rezume template file.
-    """
+    """Checks that the init command can access and use the rezume template file."""
     template_path = InitCommand.get_template_path()
     assert template_path.exists()
     assert template_path.is_file()

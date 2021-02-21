@@ -1,12 +1,13 @@
-import typer
 from pathlib import Path
+
+import typer
+
 from ... import Rezume, RezumeError
-from . import Command, DEFAULT_FILENAME
+from . import DEFAULT_FILENAME, Command
 
 
 class TestCommand(Command):
-    """Validates correctness of a rezume.yml file
-    """
+    """Validates correctness of a rezume.yml file"""
 
     name = "test"
 
@@ -26,7 +27,6 @@ class TestCommand(Command):
 
     @staticmethod
     def handler(filename: Path = DEFAULT_FILENAME):
-        """Validates correctness of a rezume.yml file
-        """
+        """Validates correctness of a rezume.yml file"""
         command = TestCommand(filename)
         command.run()

@@ -1,5 +1,6 @@
-import pytest
 import random
+
+import pytest
 
 from rezume.sections import Section
 

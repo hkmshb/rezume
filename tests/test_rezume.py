@@ -1,8 +1,9 @@
-import pytest
 from pathlib import Path
+
+import pytest
 from pydantic import ValidationError
 
-from rezume import get_version, Rezume, RezumeError
+from rezume import Rezume, RezumeError, get_version
 from rezume.models import Education, Experience
 
 
@@ -43,9 +44,7 @@ class TestResume:
     def test_adding_item_to_wrong_section_fails(self):
         rezume = Rezume()
         with pytest.raises(RezumeError):
-            item = Education(
-                institution="edX", area="humanity", start_date="2020-07-05"
-            )
+            item = Education(institution="edX", area="humanity", start_date="2020-07-05")
             rezume.add_item("work", item)
 
     @pytest.mark.skip(msg="restore when resume uses generic section")

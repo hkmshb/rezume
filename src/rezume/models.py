@@ -1,5 +1,6 @@
 from datetime import date
 from typing import List, Optional
+
 from pydantic import BaseModel, EmailStr, HttpUrl
 
 
@@ -12,16 +13,14 @@ class Model(BaseModel):
 
 
 class DatedEntry(Model):
-    """Represents an entry having a start and end date.
-    """
+    """Represents an entry having a start and end date."""
 
     start_date: date
     end_date: Optional[date]
 
 
 class NamedKeywords(Model):
-    """Represents details describing a named list of keywords.
-    """
+    """Represents details describing a named list of keywords."""
 
     name: str
     keywords: Optional[List[str]]
@@ -32,8 +31,7 @@ class NamedKeywords(Model):
 
 
 class Location(Model):
-    """Represents a physical contact address.
-    """
+    """Represents a physical contact address."""
 
     address: str
     postal_code: Optional[str]
@@ -43,8 +41,7 @@ class Location(Model):
 
 
 class Profile(Model):
-    """Represents a profile on a social or professional network.
-    """
+    """Represents a profile on a social or professional network."""
 
     network: str
     username: str
@@ -52,8 +49,7 @@ class Profile(Model):
 
 
 class PersonalInfo(Model):
-    """Represents personal details for resume owner.
-    """
+    """Represents personal details for resume owner."""
 
     name: str
     label: str
@@ -67,8 +63,7 @@ class PersonalInfo(Model):
 
 
 class Reference(Model):
-    """Represents details describing reference received.
-    """
+    """Represents details describing reference received."""
 
     name: str
     reference: str
@@ -79,8 +74,7 @@ class Reference(Model):
 
 
 class Education(DatedEntry):
-    """Represents details describing an educational qualification.
-    """
+    """Represents details describing an educational qualification."""
 
     institution: str
     area: str
@@ -90,8 +84,7 @@ class Education(DatedEntry):
 
 
 class Experience(DatedEntry):
-    """Represents base model for experience related objects.
-    """
+    """Represents base model for experience related objects."""
 
     position: str
     summary: Optional[str]
@@ -100,15 +93,13 @@ class Experience(DatedEntry):
 
 
 class Work(Experience):
-    """Represents details describing a work-related experience.
-    """
+    """Represents details describing a work-related experience."""
 
     company: str
 
 
 class Volunteer(Experience):
-    """Represents details describing a volunteer-related experience.
-    """
+    """Represents details describing a volunteer-related experience."""
 
     organization: str
 
@@ -118,16 +109,14 @@ class Volunteer(Experience):
 
 
 class Language(Model):
-    """Represents details describing language spoken.
-    """
+    """Represents details describing language spoken."""
 
     language: str = "English"
     fluency: str
 
 
 class Skill(NamedKeywords):
-    """Represents details describing skill.
-    """
+    """Represents details describing skill."""
 
     level: str
 
@@ -137,8 +126,7 @@ class Skill(NamedKeywords):
 
 
 class Award(Model):
-    """Represents details describing a received award.
-    """
+    """Represents details describing a received award."""
 
     title: str
     awarder: str
@@ -147,8 +135,7 @@ class Award(Model):
 
 
 class Publication(Model):
-    """Represents details describing a publication.
-    """
+    """Represents details describing a publication."""
 
     name: str
     publisher: str
@@ -162,8 +149,7 @@ class Publication(Model):
 
 
 class Rezume(Model):
-    """Represents resume data.
-    """
+    """Represents resume data."""
 
     basics: PersonalInfo
     work: Optional[List[Work]]

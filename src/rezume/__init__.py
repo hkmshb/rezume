@@ -1,33 +1,32 @@
-from pathlib import Path
-from importlib import metadata
-from typing import Any, Union
 from datetime import date, datetime
-from yaml import dump, load, Dumper, Loader, parser
+from importlib import metadata
+from pathlib import Path
+from typing import Any, Union
+
 from pydantic import BaseModel, HttpUrl, ValidationError
+from yaml import Dumper, Loader, dump, load, parser
 
 from .base import RezumeError
-from .models import PersonalInfo, Rezume as RezumeModel
-from .sections import (
+from .models import PersonalInfo, Rezume as RezumeModel  # noqa
+from .sections import (  # noqa
     AwardSet,
     EducationSet,
     ExperienceSet,
     LanguageSet,
-    PublicationSet,
     NamedKeywordsSet,
+    PublicationSet,
     ReferenceSet,
     RezumeBase,
 )
 
 
 def get_version():
-    """Retrieves and returns the package version details.
-    """
+    """Retrieves and returns the package version details."""
     return metadata.version("rezume")
 
 
 class Rezume(RezumeBase):
-    """Represents a resume.
-    """
+    """Represents a resume."""
 
     FIELDS = [
         "name",
@@ -93,8 +92,7 @@ class Rezume(RezumeBase):
             raise RezumeError(f"error: {ex}")
 
     def load_data(self, data: dict) -> "Rezume":
-        """Loads the provide rezume data.
-        """
+        """Loads the provide rezume data."""
         self.clear()
         rezume = RezumeModel(**data)
 
